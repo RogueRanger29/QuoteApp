@@ -1,9 +1,22 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
 
 const QuoteField = ({addQuote}) => {
     const [text, setText]  = useState("")
     const [author, setAuthor] = useState("")
     const handleQuote = () => {
+        if (text.trim() === "" || author.trim() === ""){
+            toast.error("Please fill in both fields", { position: "top-center" })
+            return
+        }
+        if (text.trim().length < 5 || text.trim().length >250){
+            toast.error("Please keep the quote between 5 and 250 characters", { position: "top-center" })
+            return
+        }
+        if (author.trim().length < 1 || author.trim().length > 15){
+            toast.error("Please your name between 1 and 15 characters",{ position: "top-center" })
+            return
+        }
         if (text.trim() !== "" && author.trim() !== ""){
             addQuote({text: text, author: author})
             setText("")

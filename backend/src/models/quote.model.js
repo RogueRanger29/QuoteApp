@@ -15,7 +15,7 @@ const quoteSchema = new Schema(
             required: true,
             trim: true,
             minLength: 1,
-            maxLength: 10,
+            maxLength: 15,
         }
     },
     {

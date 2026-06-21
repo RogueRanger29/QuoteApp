@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const QuoteCard = ({ quotes }) => {
+const QuoteCard = ({ quotes }: {quotes: {text: string, author: string}[]}) => {
     const [index, setIndex] = useState(0);
 
     if (quotes.length === 0) {
@@ -17,7 +17,7 @@ const QuoteCard = ({ quotes }) => {
             <div className="
                 w-full
                 max-w-4xl
-                h-[400px]
+                h-100
                 bg-gray-900
                 rounded-2xl
                 shadow-xl
