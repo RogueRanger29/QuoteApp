@@ -1,8 +1,25 @@
 import { Quote } from "../models/quote.model.js";
+import jwt from 'jsonwebtoken'
 
 const createQuote = async (req, res) => {
     try {
         const {text, author} = req.body
+
+        const authHeader = req.headers.authorization
+
+        if (!authHeader) {
+            return res.status(401).json({
+                success: false,
+                message: "Authorization header missing"
+            })
+        }   
+
+        const token = authHeader.split(" ")[1]
+
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET
+        )
 
         if (!text || !author){
             return res.status(400).json({
@@ -16,17 +33,58 @@ const createQuote = async (req, res) => {
             quote
         })
     } catch (error) {
-        return res.status(500).json({message: "Internal Server Error"})
+        if (
+            error.name === "JsonWebTokenError" ||
+            error.name === "TokenExpiredError" ||
+            error.name === "NotBeforeError"
+        ) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid or expired token"
+            })
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        })
     }
 }
 
 const getQuotes = async (req, res) => {
     try {
         const quotes = await Quote.find()
+        const authHeader = req.headers.authorization
+
+        if (!authHeader) {
+            return res.status(401).json({
+                success: false,
+                message: "Authorization header missing"
+            })
+        }   
+
+        const token = authHeader.split(" ")[1]
+
+        const decoded = jwt.verify(
+            token,
+            process.env.JWT_SECRET
+        )
         res.status(200).json(quotes)
     } catch (error) {
+        if (
+            error.name === "JsonWebTokenError" ||
+            error.name === "TokenExpiredError" ||
+            error.name === "NotBeforeError"
+        ) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid or expired token"
+            })
+        }
+
         return res.status(500).json({
-            message: "Internal server error"
+            success: false,
+            message: "Internal Server Error"
         })
     }
 }

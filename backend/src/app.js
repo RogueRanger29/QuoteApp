@@ -7,6 +7,8 @@ app.use(cors())
 app.use(express.json())
 
 import quoteRouter from './routes/quote.route.js'
+import userRouter from './routes/user.route.js'
 
 app.use('/api/v1/quotes', quoteRouter)
+app.use('/api/v1/auth', userRouter)
 export default app

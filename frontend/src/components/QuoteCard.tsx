@@ -4,7 +4,25 @@ const QuoteCard = ({ quotes }: {quotes: {text: string, author: string}[]}) => {
     const [index, setIndex] = useState(0);
 
     if (quotes.length === 0) {
-        return <div>No quotes yet</div>;
+        return (
+            <div className="flex flex-col items-center justify-center gap-4">
+                <div className="
+                    w-full
+                    max-w-4xl
+                    h-100
+                    bg-gray-900
+                    rounded-2xl
+                    shadow-xl
+                    flex
+                    flex-col
+                    items-center
+                    justify-center
+                    gap-12
+                ">
+                    <h2 className="text-4xl font-light text-center max-2w-2xl"> No Quotes Yet</h2>
+                </div>
+            </div>
+        )
     }
 
     const showRandomQuote = () => {
