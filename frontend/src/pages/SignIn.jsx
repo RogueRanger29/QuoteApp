@@ -1,12 +1,79 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import '../index.css'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast, Toaster } from 'sonner'
+import axios from 'axios'
+import { API_BASE_URL } from '../constants'
+
+
+const validateEmail = (email) => {
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(email);
+}
 
 const SignUp = () => {
     const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [password, setPassword] = useState("")   
+
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            if (localStorage.getItem("token") !== null){
+                try {
+                    const response = await axios.get(API_BASE_URL+"/auth/me", {
+                        headers : {
+                            "Authorization" : "Bearer " + localStorage.getItem("token")
+                        }
+                    })
+                    
+                    navigate("/")
+                } catch (error) {
+                    localStorage.clear()
+                }
+            }
+            else{
+                localStorage.clear()
+            }
+        }
+
+        checkAuth()
+    }, [])
+
+    const handleSubmit = async () => {
+        try {
+            if (!validateEmail(email)){
+                toast.error("Please use a valid email", { position: "top-center" })
+                return
+            }
+            const payload  = {
+                email: email,
+                password: password
+            }
+
+            const response = await axios.post(API_BASE_URL+"/auth/sign-in", payload)
+
+            if (response.status === 200){
+                toast.success('Successfully signed in', { position: "top-center" })
+            }
+            
+            localStorage.setItem("token", response.data.data.token)
+            navigate("/")
+        } catch(error){
+            if (error.response?.status === 401){
+                toast.error("Invalid Credentials", { position: "top-center" })
+            }
+            else if (error.response?.status === 409) {
+                toast.error("Couldn't find user", { position: "top-center" })
+            } else {
+                toast.error("Something went wrong", { position: "top-center" })
+            }
+        }
+    }
+    
     return (
         <div className="min-h-screen bg-gray-950 text-white flex flex-col gap-5 justify-center items-center">
+                 <Toaster />
                  <h2 className="h3-bold md:h2-bold pt-5 sm:pt-12">
                     Log in to your account
                 </h2>
@@ -41,7 +108,7 @@ const SignUp = () => {
                     border-gray-300
                     "
                 />
-                <button type='submit' onClick={() => {setEmail("gettrolled")}} className='px-6 py-3 bg-gray-800 text-white font-medium rounded-lg shadow hover:bg-gray-700  transition-colors duration-200'>
+                <button type='submit' onClick={handleSubmit} className='px-6 py-3 bg-gray-800 text-white font-medium rounded-lg shadow hover:bg-gray-700  transition-colors duration-200'>
                     Sign In
                 </button>
 

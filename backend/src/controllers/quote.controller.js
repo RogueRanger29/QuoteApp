@@ -27,6 +27,14 @@ const createQuote = async (req, res) => {
             })
         }
 
+        const existingQuote = await Quote.findOne({ text })
+
+        if (existingQuote){
+            return res.status(409).json({
+                message: "Duplicate Quote"
+            })
+        }
+
         const quote = await Quote.create({text, author})
         return res.status(201).json({
             message: "Quote created successfully",
