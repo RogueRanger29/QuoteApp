@@ -21,7 +21,7 @@ const Topbar = () => {
                 className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
             >
                 <img
-                    src={"../public/logout.png"}
+                    src={"/logout.png"}
                     alt="Action"
                     className="w-8 h-8"
                 />
